@@ -1,0 +1,29 @@
+# Stage 1: Build da UI customizada
+FROM node:18-alpine AS builder
+
+WORKDIR /app
+
+# Copiar package.json e yarn.lock
+COPY package.json yarn.lock ./
+
+# Instalar dependências
+RUN yarn install --frozen-lockfile
+
+# Copiar código fonte
+COPY . .
+
+# Build da aplicação
+RUN yarn build
+
+# Stage 2: Servir a UI compilada
+FROM caddy:2-alpine
+
+# Copiar build da UI
+COPY --from=builder /app/build /usr/share/caddy
+
+# Copiar Caddyfile se existir, senão usar padrão
+COPY Caddyfile /etc/caddy/Caddyfile
+
+EXPOSE 3000
+
+CMD ["caddy", "run", "--config", "/etc/caddy/Caddyfile", "--adapter", "caddyfile"]

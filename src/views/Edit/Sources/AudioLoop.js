@@ -15,7 +15,7 @@ import Filesize from '../../../misc/Filesize';
 import FormInlineButton from '../../../misc/FormInlineButton';
 import UploadButton from '../../../misc/UploadButton';
 
-const imageTypes = [{ mimetype: 'audio/*', extension: 'audio', maxSize: 25 * 1024 * 1024 }];
+const imageTypes = [{ mimetype: 'audio/*', extension: 'audio', maxSize: 500 * 1024 * 1024 }];
 
 const useStyles = makeStyles((theme) => ({
 	gridContainer: {
@@ -178,9 +178,9 @@ function Source(props) {
 Source.defaultProps = {
 	knownDevices: [],
 	settings: {},
-	onChange: function (settings) {},
-	onProbe: function (settings, inputs) {},
-	onRefresh: function () {},
+	onChange: function (settings) { },
+	onProbe: function (settings, inputs) { },
+	onRefresh: function () { },
 	onStore: function (name, data) {
 		return '';
 	},

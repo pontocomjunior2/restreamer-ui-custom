@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  # Restreamer Core
+  core:
+    image: datarhei/core:latest
+    container_name: restreamer-core
+    restart: always
+    ports:
+      - "8080:8080"   # HTTP
+      - "8181:8181"   # HTTPS
+      - "1935:1935"   # RTMP
+      - "6000:6000/udp" # SRT
+    volumes:
+      - core-config:/core/config
+      - core-data:/core/data
+    environment:
+      - CORE_API_AUTH_ENABLE=false
+      - CORE_API_AUTH_USERNAME=${CORE_USERNAME:-admin}
+      - CORE_API_AUTH_PASSWORD=${CORE_PASSWORD:-}
+      - CORE_STORAGE_DISK_MAX_SIZE_MBYTES=0
+      - CORE_STORAGE_MEMORY_MAX_SIZE_MBYTES=0
+      - CORE_LOG_LEVEL=info
+    networks:
+      - restreamer
+
+  # Restreamer UI Customizada (500MB upload limit)
+  ui:
+    build:
+      context: .
+      dockerfile: Dockerfile.custom
+    container_name: restreamer-ui-custom
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_CORE_API=http://core:8080
+    depends_on:
+      - core
+    networks:
+      - restreamer
+
+volumes:
+  core-config:
+  core-data:
+
+networks:
+  restreamer:
+    driver: bridge
