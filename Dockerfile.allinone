@@ -18,14 +18,18 @@ RUN yarn build
 # Stage 2: Imagem final com Core + UI customizada
 FROM datarhei/core:latest
 
-# Copiar UI customizada para o Core
+# Remover UI padrão se existir e copiar UI customizada
+RUN rm -rf /core/ui 2>/dev/null || true
 COPY --from=ui-builder /ui/build /core/ui
 
-# Variáveis de ambiente padrão
+# Variáveis de ambiente para configurar o Core
 ENV CORE_HTTP_CLIENT_MAX_BODY_SIZE=524288000
 ENV CORE_STORAGE_DISK_MAX_SIZE_MBYTES=0
 ENV CORE_STORAGE_MEMORY_MAX_SIZE_MBYTES=0
 ENV CORE_API_AUTH_ENABLE=true
+
+# IMPORTANTE: Configurar caminho da UI
+ENV CORE_ROUTER_UI_PATH=/core/ui
 
 # Expor portas
 EXPOSE 8080 8181 1935 6000/udp

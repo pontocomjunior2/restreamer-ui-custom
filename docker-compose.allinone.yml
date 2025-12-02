@@ -23,6 +23,7 @@ services:
       - CORE_API_AUTH_USERNAME=${CORE_USERNAME:-admin}
       - CORE_API_AUTH_PASSWORD=${CORE_PASSWORD:-changeme}
       - CORE_LOG_LEVEL=info
+      - CORE_ROUTER_UI_PATH=/core/ui
 
 volumes:
   restreamer-config:
