@@ -1,0 +1,29 @@
+# Docker Compose ALL-IN-ONE com PORTAS ALTERNATIVAS
+# Use este se as portas padrão estiverem ocupadas
+
+version: '3.8'
+
+services:
+  restreamer:
+    build:
+      context: https://github.com/pontocomjunior2/restreamer-ui-custom.git
+      dockerfile: Dockerfile.allinone
+    container_name: restreamer-custom
+    restart: always
+    ports:
+      - "8080:8080"    # UI + API
+      - "8181:8181"    # HTTPS
+      - "1936:1935"    # RTMP (porta externa alterada para 1936)
+      - "6001:6000/udp" # SRT (porta externa alterada para 6001)
+    volumes:
+      - restreamer-config:/core/config
+      - restreamer-data:/core/data
+    environment:
+      # ⚠️ CONFIGURE NO EASYPANEL:
+      - CORE_API_AUTH_USERNAME=${CORE_USERNAME:-admin}
+      - CORE_API_AUTH_PASSWORD=${CORE_PASSWORD:-changeme}
+      - CORE_LOG_LEVEL=info
+
+volumes:
+  restreamer-config:
+  restreamer-data:
