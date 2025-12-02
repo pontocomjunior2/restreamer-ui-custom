@@ -1,0 +1,33 @@
+# Dockerfile completo - Restreamer com UI customizada (500MB limit)
+# Build multi-stage: UI customizada + Core oficial
+
+# Stage 1: Build da UI customizada
+FROM node:18-alpine AS ui-builder
+
+WORKDIR /ui
+
+# Copiar arquivos do projeto
+COPY package.json yarn.lock ./
+RUN yarn install --frozen-lockfile
+
+COPY . .
+
+# Build da UI
+RUN yarn build
+
+# Stage 2: Imagem final com Core + UI customizada
+FROM datarhei/core:latest
+
+# Copiar UI customizada para o Core
+COPY --from=ui-builder /ui/build /core/ui
+
+# Variáveis de ambiente padrão
+ENV CORE_HTTP_CLIENT_MAX_BODY_SIZE=524288000
+ENV CORE_STORAGE_DISK_MAX_SIZE_MBYTES=0
+ENV CORE_STORAGE_MEMORY_MAX_SIZE_MBYTES=0
+ENV CORE_API_AUTH_ENABLE=true
+
+# Expor portas
+EXPOSE 8080 8181 1935 6000/udp
+
+# O Core já tem o ENTRYPOINT definido

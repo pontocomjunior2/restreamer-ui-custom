@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  # Restreamer Core
+  core:
+    image: datarhei/core:latest
+    container_name: restreamer-core
+    restart: always
+    ports:
+      - "8080:8080"   # HTTP
+      - "8181:8181"   # HTTPS
+      - "1935:1935"   # RTMP
+      - "6000:6000/udp" # SRT
+    volumes:
+      - core-config:/core/config
+      - core-data:/core/data
+    environment:
+      # Autenticação (IMPORTANTE: Configure estas variáveis!)
+      - CORE_API_AUTH_ENABLE=${CORE_AUTH_ENABLE:-true}
+      - CORE_API_AUTH_USERNAME=${CORE_USERNAME:-admin}
+      - CORE_API_AUTH_PASSWORD=${CORE_PASSWORD:-changeme}
+      
+      # Limite de upload - 500MB (524288000 bytes)
+      - CORE_HTTP_CLIENT_MAX_BODY_SIZE=524288000
+      
+      # Armazenamento ilimitado
+      - CORE_STORAGE_DISK_MAX_SIZE_MBYTES=0
+      - CORE_STORAGE_MEMORY_MAX_SIZE_MBYTES=0
+      
+      # Logs
+      - CORE_LOG_LEVEL=${LOG_LEVEL:-info}
+    networks:
+      - restreamer
+
+  # Restreamer UI Customizada (500MB upload limit)
+  ui:
+    image: ghcr.io/pontocomjunior2/restreamer-ui-custom:latest
+    build:
+      context: https://github.com/pontocomjunior2/restreamer-ui-custom.git
+      dockerfile: Dockerfile.custom
+    container_name: restreamer-ui-custom
+    restart: always
+    ports:
+      - "9199:3000"  # Porta externa 9199 mapeada para 3000 interna
+    environment:
+      - REACT_APP_CORE_API=http://core:8080
+    depends_on:
+      - core
+    networks:
+      - restreamer
+
+volumes:
+  core-config:
+  core-data:
+
+networks:
+  restreamer:
+    driver: bridge

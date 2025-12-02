@@ -1,0 +1,29 @@
+# Docker Compose ALL-IN-ONE
+# Versão mais simples - Uma imagem com tudo integrado
+
+version: '3.8'
+
+services:
+  restreamer:
+    build:
+      context: https://github.com/pontocomjunior2/restreamer-ui-custom.git
+      dockerfile: Dockerfile.allinone
+    container_name: restreamer-custom
+    restart: always
+    ports:
+      - "8080:8080"   # UI + API
+      - "8181:8181"   # HTTPS
+      - "1935:1935"   # RTMP
+      - "6000:6000/udp" # SRT
+    volumes:
+      - restreamer-config:/core/config
+      - restreamer-data:/core/data
+    environment:
+      # ⚠️ CONFIGURE NO EASYPANEL:
+      - CORE_API_AUTH_USERNAME=${CORE_USERNAME:-admin}
+      - CORE_API_AUTH_PASSWORD=${CORE_PASSWORD:-changeme}
+      - CORE_LOG_LEVEL=info
+
+volumes:
+  restreamer-config:
+  restreamer-data:
