@@ -16,7 +16,7 @@ services:
     environment:
       # ✅ AMBAS variáveis necessárias!
       - CORE_API_AUTH_USERNAME=admin
-      - CORE_API_AUTH_PASSWORD=SuaSenhaSeguraAqui123!
+      - CORE_API_AUTH_PASSWORD=Conquista@@2
       - CORE_ROUTER_UI_PATH=/core/ui
 
 volumes:
