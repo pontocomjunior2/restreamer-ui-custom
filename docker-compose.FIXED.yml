@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  restreamer:
+    build:
+      context: https://github.com/pontocomjunior2/restreamer-ui-custom.git
+      dockerfile: Dockerfile.allinone
+    container_name: restreamer-custom-alt
+    restart: always
+    ports:
+      - "9000:8080"
+      - "1936:1935"
+      - "6001:6000/udp"
+    volumes:
+      - restreamer-data:/core/data
+    environment:
+      # ✅ AMBAS variáveis necessárias!
+      - CORE_API_AUTH_USERNAME=admin
+      - CORE_API_AUTH_PASSWORD=SuaSenhaSeguraAqui123!
+      - CORE_ROUTER_UI_PATH=/core/ui
+
+volumes:
+  restreamer-data:
